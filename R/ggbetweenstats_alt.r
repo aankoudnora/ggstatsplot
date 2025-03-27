@@ -1,5 +1,6 @@
-#' @title Box/Violin plots for between-subjects comparisons
-#' @name ggbetweenstats
+#' @title Alternative version of ggbetweenstats with customizable effect size CI
+
+#' @name ggbetweenstats_alt
 #'
 #' @description
 #'
@@ -141,7 +142,7 @@
 #'   point.args = list(alpha = 0)
 #' )
 #' @export
-ggbetweenstats <- function(
+ggbetweenstats_alt <- function(
   data,
   x,
   y,
@@ -302,4 +303,67 @@ ggbetweenstats <- function(
   )
 }
 
-#changement
+
+#' @title Violin plots for group or condition comparisons in between-subjects
+#'   designs repeated across all levels of a grouping variable.
+#' @name grouped_ggbetweenstats
+#'
+#' @description
+#'
+#' Helper function for `ggstatsplot::ggbetweenstats` to apply this function
+#' across multiple levels of a given factor and combining the resulting plots
+#' using `ggstatsplot::combine_plots`.
+#'
+#' @inheritParams ggbetweenstats
+#' @inheritParams .grouped_list
+#' @inheritParams combine_plots
+#' @inheritDotParams ggbetweenstats -title
+#'
+#' @autoglobal
+#'
+#' @seealso \code{\link{ggbetweenstats}}, \code{\link{ggwithinstats}},
+#'  \code{\link{grouped_ggwithinstats}}
+#'
+#' @inherit ggbetweenstats return references
+#'
+#' @examplesIf identical(Sys.getenv("NOT_CRAN"), "true")
+#' # for reproducibility
+#' set.seed(123)
+#'
+#' library(dplyr, warn.conflicts = FALSE)
+#' library(ggplot2)
+#'
+#' grouped_ggbetweenstats(
+#'   data = filter(ggplot2::mpg, drv != "4"),
+#'   x = year,
+#'   y = hwy,
+#'   grouping.var = drv
+#' )
+#'
+#' # modifying individual plots using `ggplot.component` argument
+#' grouped_ggbetweenstats(
+#'   data = filter(
+#'     movies_long,
+#'     genre %in% c("Action", "Comedy"),
+#'     mpaa %in% c("R", "PG")
+#'   ),
+#'   x = genre,
+#'   y = rating,
+#'   grouping.var = mpaa,
+#'   ggplot.component = scale_y_continuous(
+#'     breaks = seq(1, 9, 1),
+#'     limits = (c(1, 9))
+#'   )
+#' )
+#' @export
+grouped_ggbetweenstats_alt <- function(
+  data,
+  ...,
+  grouping.var,
+  plotgrid.args = list(),
+  annotation.args = list()
+) {
+  .grouped_list(data, {{ grouping.var }}) %>%
+    purrr::pmap(.f = ggbetweenstats_alt, ...) %>%
+    combine_plots(plotgrid.args, annotation.args)
+}
