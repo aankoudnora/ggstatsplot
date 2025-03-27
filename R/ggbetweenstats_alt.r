@@ -1,5 +1,6 @@
-#' @title Box/Violin plots for between-subjects comparisons
-#' @name ggbetweenstats
+#' @title Alternative version of ggbetweenstats with customizable effect size CI
+
+#' @name ggbetweenstats_alt
 #'
 #' @description
 #'
@@ -141,7 +142,7 @@
 #'   point.args = list(alpha = 0)
 #' )
 #' @export
-ggbetweenstats <- function(
+ggbetweenstats_alt <- function(
   data,
   x,
   y,
@@ -355,7 +356,7 @@ ggbetweenstats <- function(
 #'   )
 #' )
 #' @export
-grouped_ggbetweenstats <- function(
+grouped_ggbetweenstats_alt <- function(
   data,
   ...,
   grouping.var,
@@ -363,6 +364,6 @@ grouped_ggbetweenstats <- function(
   annotation.args = list()
 ) {
   .grouped_list(data, {{ grouping.var }}) %>%
-    purrr::pmap(.f = ggbetweenstats, ...) %>%
+    purrr::pmap(.f = ggbetweenstats_alt, ...) %>%
     combine_plots(plotgrid.args, annotation.args)
 }
