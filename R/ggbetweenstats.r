@@ -1,4 +1,4 @@
-#' @title Box/Violin plots for between-subjects comparisons (with effect size CI customization)
+#' @title Box/Violin plots for between-subjects comparisons 
 
 #' @name ggbetweenstats
 #'
@@ -186,7 +186,7 @@ ggbetweenstats <- function(
   package = "RColorBrewer",
   palette = "Dark2",
   ggplot.component = NULL,
-  effsize.alternative = "greater", #ADDED BY NORA: controls the CI alternative hypothesis for effect size 
+  effsize.alternative = "greater", #controls the CI alternative hypothesis for effect size 
   ...
 ) {
   # data -----------------------------------
@@ -217,7 +217,7 @@ ggbetweenstats <- function(
       paired = FALSE,
       bf.prior = bf.prior,
       nboot = nboot,
-      alternative = effsize.alternative # ADDED BY NORA
+      alternative = effsize.alternative  #controls the CI alternative hypothesis for effect size 
     )
 
     .f <- .f_switch(test)
