@@ -1,4 +1,4 @@
-#' @title Alternative version of ggbetweenstats with customizable effect size CI
+#' @title Box/Violin plots for between-subjects comparisons (with effect size CI customization)
 
 #' @name ggbetweenstats
 #'
