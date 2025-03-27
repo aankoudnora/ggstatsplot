@@ -19,6 +19,8 @@
 #' @param p.adjust.method Adjustment method for *p*-values for multiple
 #'   comparisons. Possible methods are: `"holm"` (default), `"hochberg"`,
 #'   `"hommel"`, `"bonferroni"`, `"BH"`, `"BY"`, `"fdr"`, `"none"`.
+#' @param effsize.alternative Alternative hypothesis for the effect size’s confidence interval.
+#'   One of `"greater"`, `"less"` or `"two.sided"`. Default is `"greater"`, as in the `effectsize` package.
 #' @param pairwise.display Decides *which* pairwise comparisons to display.
 #'   Available options are:
 #'   - `"significant"` (abbreviation accepted: `"s"`)
@@ -73,8 +75,6 @@
 #' @param package,palette Name of the package from which the given palette is to
 #'   be extracted. The available palettes and packages can be checked by running
 #'   `View(paletteer::palettes_d_names)`.
-#' @param effsize.alternative Alternative hypothesis for the effect size’s confidence interval.
-#'   One of `"greater"`, `"less"` or `"two.sided"`. Default is `"greater"`, as in the `effectsize` package.
 #' @param ... Currently ignored.
 #' @inheritParams theme_ggstatsplot
 #' @param centrality.point.args,centrality.label.args A list of additional aesthetic
@@ -185,9 +185,12 @@ ggbetweenstats <- function(
   package = "RColorBrewer",
   palette = "Dark2",
   ggplot.component = NULL,
-  effsize.alternative = "greater",
+  effsize.alternative = "greater", #ADDED BY NORA: controls the CI alternative hypothesis for effect size 
   ...
 ) {
+  # data -----------------------------------
+
+  # make sure both quoted and unquoted arguments are allowed
   c(x, y) %<-% c(ensym(x), ensym(y))
   type <- stats_type_switch(type)
 
@@ -195,6 +198,8 @@ ggbetweenstats <- function(
     select({{ x }}, {{ y }}) %>%
     tidyr::drop_na() %>%
     mutate({{ x }} := droplevels(as.factor({{ x }})))
+
+  # statistical analysis ------------------------------------------
 
   test <- ifelse(nlevels(pull(data, {{ x }})) < 3L, "t", "anova")
 
@@ -211,7 +216,7 @@ ggbetweenstats <- function(
       paired = FALSE,
       bf.prior = bf.prior,
       nboot = nboot,
-      alternative = effsize.alternative
+      alternative = effsize.alternative # ADDED BY NORA
     )
 
     .f <- .f_switch(test)
@@ -224,10 +229,14 @@ ggbetweenstats <- function(
     }
   }
 
+  # plot -----------------------------------
+
   plot_comparison <- ggplot(data, mapping = aes({{ x }}, {{ y }})) +
     exec(geom_point, aes(color = {{ x }}), !!!point.args) +
     exec(geom_boxplot, !!!boxplot.args, outlier.shape = NA) +
     exec(geom_violin, !!!violin.args)
+
+  # centrality tagging -------------------------------------
 
   if (isTRUE(centrality.plotting)) {
     plot_comparison <- suppressWarnings(.centrality_ggrepel(
@@ -242,6 +251,8 @@ ggbetweenstats <- function(
       centrality.label.args = centrality.label.args
     ))
   }
+
+  # ggsignif labels -------------------------------------
 
   seclabel <- NULL
 
@@ -258,6 +269,7 @@ ggbetweenstats <- function(
       digits = digits
     )
 
+    # adding the layer for pairwise comparisons
     plot_comparison <- .ggsignif_adder(
       plot             = plot_comparison,
       mpc_df           = mpc_df,
@@ -268,8 +280,11 @@ ggbetweenstats <- function(
       ggsignif.args    = ggsignif.args
     )
 
+    # secondary label axis to give pairwise comparisons test details
     seclabel <- .pairwise_seclabel(unique(mpc_df$test), ifelse(type == "bayes", "all", pairwise.display))
   }
+
+  # annotations ------------------------
 
   .aesthetic_addon(
     plot             = plot_comparison,
@@ -287,4 +302,4 @@ ggbetweenstats <- function(
   )
 }
 
-#comme
+#changement
