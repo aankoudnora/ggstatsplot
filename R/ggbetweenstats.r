@@ -1,6 +1,6 @@
 #' @title Alternative version of ggbetweenstats with customizable effect size CI
 
-#' @name ggbetweenstats_alt
+#' @name ggbetweenstats
 #'
 #' @description
 #'
@@ -142,7 +142,7 @@
 #'   point.args = list(alpha = 0)
 #' )
 #' @export
-ggbetweenstats_alt <- function(
+ggbetweenstats <- function(
   data,
   x,
   y,
@@ -356,7 +356,7 @@ ggbetweenstats_alt <- function(
 #'   )
 #' )
 #' @export
-grouped_ggbetweenstats_alt <- function(
+grouped_ggbetweenstats <- function(
   data,
   ...,
   grouping.var,
@@ -364,6 +364,6 @@ grouped_ggbetweenstats_alt <- function(
   annotation.args = list()
 ) {
   .grouped_list(data, {{ grouping.var }}) %>%
-    purrr::pmap(.f = ggbetweenstats_alt, ...) %>%
+    purrr::pmap(.f = ggbetweenstats, ...) %>%
     combine_plots(plotgrid.args, annotation.args)
 }
