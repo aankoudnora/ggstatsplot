@@ -1,4 +1,5 @@
-#' @title Box/Violin plots for between-subjects comparisons
+#' @title Box/Violin plots for between-subjects comparisons 
+
 #' @name ggbetweenstats
 #'
 #' @description
@@ -19,6 +20,8 @@
 #' @param p.adjust.method Adjustment method for *p*-values for multiple
 #'   comparisons. Possible methods are: `"holm"` (default), `"hochberg"`,
 #'   `"hommel"`, `"bonferroni"`, `"BH"`, `"BY"`, `"fdr"`, `"none"`.
+#' @param effsize.alternative Alternative hypothesis for the effect size’s confidence interval.
+#'   One of `"greater"`, `"less"` or `"two.sided"`. Default is `"greater"`, as in the `effectsize` package.
 #' @param pairwise.display Decides *which* pairwise comparisons to display.
 #'   Available options are:
 #'   - `"significant"` (abbreviation accepted: `"s"`)
@@ -183,6 +186,7 @@ ggbetweenstats <- function(
   package = "RColorBrewer",
   palette = "Dark2",
   ggplot.component = NULL,
+  effsize.alternative = "greater", #controls the CI alternative hypothesis for effect size 
   ...
 ) {
   # data -----------------------------------
@@ -212,7 +216,8 @@ ggbetweenstats <- function(
       tr = tr,
       paired = FALSE,
       bf.prior = bf.prior,
-      nboot = nboot
+      nboot = nboot,
+      alternative = effsize.alternative  #controls the CI alternative hypothesis for effect size 
     )
 
     .f <- .f_switch(test)
